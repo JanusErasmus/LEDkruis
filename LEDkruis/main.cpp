@@ -70,10 +70,29 @@ void watchdogReset()
 //}
 //extern const dbg_entry outputEntry = {debugOut, "o"};
 
+PWM pwm;
+
+void debugPWM(uint8_t argc, char **argv)
+{
+   if(argc > 2)
+   {
+      uint8_t port = atoi(argv[1]);
+      uint8_t duty = atoi(argv[2]);
+
+      printp("Set %d to %d %%\n", port, duty);
+      pwm.setDuty(port, duty);
+   }
+   else
+   {
+      printp("Port 0: %d %%\n", pwm.getDuty(0));
+      printp("Port 1: %d %%\n", pwm.getDuty(1));
+   }
+}
+extern const dbg_entry outputEntry = {debugPWM, "pwm"};
+
 
 //cAnalog analogIn1(4);
 
-PWM pwm;
 cOutput statusGreen(0x15);
 
 /* main program starts here */
