@@ -10,7 +10,9 @@
 #include <led.h>
 #include <heartbeat.h>
 #include <analog_sampler.h>
-#include <lcd.h>
+
+#include "PWM.h"
+
 
 void watchdogReset()
 {
@@ -71,6 +73,8 @@ void watchdogReset()
 
 //cAnalog analogIn1(4);
 
+PWM pwm;
+cOutput statusGreen(0x15);
 
 /* main program starts here */
 int main(void)
@@ -80,9 +84,7 @@ int main(void)
 
 	sei();
 
-	cOutput statusRed(0x60);
-	cOutput statusGreen(0x61);
-	cLED status(&statusRed, &statusGreen);
+	cLED status(0, &statusGreen);
 //
 //	cOutput led1red(0x20);
 //	cOutput led1green(0x21);
