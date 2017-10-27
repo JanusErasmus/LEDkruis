@@ -5,6 +5,10 @@
  *      Author: Janus
  */
 #include <avr/io.h>
+#include <stdint.h>
+#include <stdlib.h>
+
+#include <terminal.h>
 
 #include "PWM.h"
 
@@ -22,6 +26,7 @@ void PWM::setDuty(uint8_t port, uint8_t duty)
 {
    if(port == 0)
    {
+      mDuty[port] = duty;
       if(duty)
       {
          TCCR0A |= 0x20;
@@ -35,6 +40,7 @@ void PWM::setDuty(uint8_t port, uint8_t duty)
 
    if(port == 1)
    {
+      mDuty[port] = duty;
       if(duty)
       {
          TCCR0A |= 0x80;
@@ -60,3 +66,22 @@ PWM::~PWM()
    // TODO Auto-generated destructor stub
 }
 
+PWM pwm;
+
+void debugPWM(uint8_t argc, char **argv)
+{
+   if(argc > 2)
+   {
+      uint8_t port = atoi(argv[1]);
+      uint8_t duty = atoi(argv[2]);
+
+      printp("Set %d to %d\n", port, duty);
+      pwm.setDuty(port, duty);
+   }
+   else
+   {
+      printp("Port 0: %d\n", pwm.getDuty(0));
+      printp("Port 1: %d\n", pwm.getDuty(1));
+   }
+}
+extern const dbg_entry outputEntry = {debugPWM, "pwm"};

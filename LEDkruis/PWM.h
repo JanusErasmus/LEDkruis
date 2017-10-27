@@ -25,4 +25,5 @@ public:
    int8_t getDuty(uint8_t port);
 };
 
+extern PWM pwm;
 #endif /* PWM_H_ */

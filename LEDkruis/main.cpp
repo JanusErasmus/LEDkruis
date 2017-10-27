@@ -12,7 +12,7 @@
 #include <analog_sampler.h>
 
 #include "PWM.h"
-
+#include "AnimateGlow.h"
 
 void watchdogReset()
 {
@@ -70,26 +70,6 @@ void watchdogReset()
 //}
 //extern const dbg_entry outputEntry = {debugOut, "o"};
 
-PWM pwm;
-
-void debugPWM(uint8_t argc, char **argv)
-{
-   if(argc > 2)
-   {
-      uint8_t port = atoi(argv[1]);
-      uint8_t duty = atoi(argv[2]);
-
-      printp("Set %d to %d %%\n", port, duty);
-      pwm.setDuty(port, duty);
-   }
-   else
-   {
-      printp("Port 0: %d %%\n", pwm.getDuty(0));
-      printp("Port 1: %d %%\n", pwm.getDuty(1));
-   }
-}
-extern const dbg_entry outputEntry = {debugPWM, "pwm"};
-
 
 //cAnalog analogIn1(4);
 
@@ -123,6 +103,9 @@ int main(void)
 
 	cHeartbeat heartbeat(&status);
 
+	AnimateGlow glow1(&pwm, 0, 15);
+    AnimateGlow glow2(&pwm, 1, 5);
+
 	while(1)
 	{
 		watchdogReset();
@@ -130,7 +113,11 @@ int main(void)
 		Terminal.run();
 		heartbeat.run();
 
-		_delay_ms(100);
+		glow1.run();
+        glow2.run();
+
+
+		_delay_ms(10);
 	}
 
 	return 0;
