@@ -14,8 +14,6 @@
 
 PWM::PWM()
 {
-   //Setup pins as output
-   DDRD |= (1 << 5) | (1 << 6);
 
    //Setup timer
    TCCR0A = 0x03;   //Setup timer0 in fast PWM for both the pins
@@ -29,25 +27,33 @@ void PWM::setDuty(uint8_t port, uint8_t duty)
       mDuty[port] = duty;
       if(duty)
       {
-         TCCR0A |= 0x20;
+         //Setup pins as output
+         DDRD |= (1 << 5);
+         TCCR0A |= 0x30;
          OCR0B = duty;
       }
       else
       {
+         //Setup pins as input
+         DDRD &= ~(1 << 5);
          TCCR0A &= ~(0x30);
       }
    }
 
    if(port == 1)
    {
+      //Setup pins as output
+      DDRD |= (1 << 6);
       mDuty[port] = duty;
       if(duty)
       {
-         TCCR0A |= 0x80;
+         TCCR0A |= 0xC0;
          OCR0A = duty;
       }
       else
       {
+         //Setup pins as input
+         DDRD &= ~(1 << 6);
          TCCR0A &= ~(0xC0);
       }
    }
@@ -80,8 +86,8 @@ void debugPWM(uint8_t argc, char **argv)
    }
    else
    {
-      printp("Port 0: %d\n", pwm.getDuty(0));
-      printp("Port 1: %d\n", pwm.getDuty(1));
+      printp("Port 0: %d\n", (uint8_t)pwm.getDuty(0));
+      printp("Port 1: %d\n", (uint8_t)pwm.getDuty(1));
    }
 }
 extern const dbg_entry outputEntry = {debugPWM, "pwm"};

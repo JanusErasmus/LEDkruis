@@ -10,68 +10,48 @@
 #include <led.h>
 #include <heartbeat.h>
 #include <analog_sampler.h>
+#include <input.h>
 
 #include "PWM.h"
 #include "AnimateGlow.h"
+#include "DayNight.h"
 
 void watchdogReset()
 {
   __asm__ __volatile__ ( "wdr\n" );
 }
 
-//cOutput relay1(PORT_PF(0));
-//cOutput relay2(PORT_PF(1));
-//cOutput relay3(PORT_PF(2));
-//cOutput relay4(PORT_PF(3));
-//void debugOut(uint8_t argc, char **argv)
-//{
-//	cOutput *relay = 0;
-//	if(argc > 1)
-//	{
-//		uint8_t num = atoi(argv[1]);
-//		switch(num)
-//		{
-//		case 1:
-//			relay = &relay1;
-//			break;
-//		case 2:
-//			relay = &relay2;
-//			break;
-//		case 3:
-//			relay = &relay3;
-//			break;
-//		case 4:
-//			relay = &relay4;
-//			break;
-//		default:
-//			return;
-//		}
-//
-//		if(argc > 2)
-//		{
-//			bool state = atoi(argv[2]);
-//			printp("%s - ", state?"set":"reset", num);
-//			if(state)
-//				relay->set();
-//			else
-//				relay->reset();
-//		}
-//
-//		bool state = relay->get();
-//		printp("RL%d: %s\n", num, state?"ON":"OFF");
-//	}
-//	else
-//	{
-//		printp("RL1: %s\n", relay1.get()?"ON":"OFF");
-//		printp("RL2: %s\n", relay2.get()?"ON":"OFF");
-//		printp("RL3: %s\n", relay3.get()?"ON":"OFF");
-//		printp("RL4: %s\n", relay4.get()?"ON":"OFF");
-//	}
-//}
-//extern const dbg_entry outputEntry = {debugOut, "o"};
 
+cAnalog light(6);
 
-//cAnalog analogIn1(4);
+void sample(uint8_t argc, char **argv)
+{
+    printp("Measuring temp:\n");
+
+    double sample = light.lastSample();
+    printf(" 1: %.1f\n", sample);
+
+}
+extern const dbg_entry analogEntry = {sample, "a"};
+
+cInput flashSwitch(0x24);
+DayNight dayNight(&light, &flashSwitch);
+
+void debugDN(uint8_t argc, char **argv)
+{
+   if(argc > 1)
+   {
+      uint16_t th = atoi(argv[1]);
+
+      printp("Set threshold %d\n", th);
+      dayNight.setThreshold(th);
+   }
+   else
+   {
+      printp("Threshold: %d\n", dayNight.getThreshold());
+   }
+}
+extern const dbg_entry thEntry = {debugDN, "th"};
 
 cOutput statusGreen(0x15);
 
@@ -84,27 +64,17 @@ int main(void)
 	sei();
 
 	cLED status(0, &statusGreen);
-//
-//	cOutput led1red(0x20);
-//	cOutput led1green(0x21);
-//	cLED led1(&led1red, &led1green);
-//
-//	cOutput led2red(0x22);
-//	cOutput led2green(0x23);
-//	cLED led2(&led2red, &led2green);
-//
-//	cOutput led3red(0x24);
-//	cOutput led3green(0x25);
-//	cLED led3(&led3red, &led3green);
-//
-//	cOutput led4red(0x26);
-//	cOutput led4green(0x27);
-//	cLED led4(&led4red, &led4green);
-
 	cHeartbeat heartbeat(&status);
 
-	AnimateGlow glow1(&pwm, 0, 15);
-    AnimateGlow glow2(&pwm, 1, 5);
+    cAnalog *analogList[] =
+    {
+            &light,
+            0
+    };
+    cAnalogSampler analogSampler(analogList);
+
+
+    printp("Light threshold: %d\n", dayNight.getThreshold());
 
 	while(1)
 	{
@@ -112,12 +82,10 @@ int main(void)
 
 		Terminal.run();
 		heartbeat.run();
+		analogSampler.run();
+		dayNight.run();
 
-		glow1.run();
-        glow2.run();
-
-
-		_delay_ms(10);
+		_delay_ms(100);
 	}
 
 	return 0;

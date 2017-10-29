@@ -20,7 +20,7 @@ class AnimateGlow
    uint8_t mDuty;
 
 public:
-   AnimateGlow(PWM *pwm, uint8_t port, uint8_t diff);
+   AnimateGlow(PWM *pwm, uint8_t port, uint8_t diff, uint8_t offset);
    virtual ~AnimateGlow();
 
    void run();

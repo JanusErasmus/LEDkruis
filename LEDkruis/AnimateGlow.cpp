@@ -7,12 +7,12 @@
 
 #include "AnimateGlow.h"
 
-AnimateGlow::AnimateGlow(PWM *pwm, uint8_t port, uint8_t diff) :
+AnimateGlow::AnimateGlow(PWM *pwm, uint8_t port, uint8_t diff, uint8_t offset) :
          mPWM(pwm),
          mPort(port),
          mDiff(diff),
          mCurrentDiff(diff),
-         mDuty(0)
+         mDuty(offset)
 {
 
 }
