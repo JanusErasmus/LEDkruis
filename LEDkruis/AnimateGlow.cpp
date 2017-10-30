@@ -20,11 +20,17 @@ AnimateGlow::AnimateGlow(PWM *pwm, uint8_t port, uint8_t diff, uint8_t offset) :
 void AnimateGlow::run()
 {
    mDuty += mCurrentDiff;
-   if(mDuty >= 250)
+   if(mDuty > 255)
+   {
       mCurrentDiff = -mDiff;
+      mDuty = 255;
+   }
 
-   if(mDuty == 0)
+   if(mDuty < 0)
+   {
       mCurrentDiff = mDiff;
+      mDuty = 0;
+   }
 
    mPWM->setDuty(mPort, mDuty);
 }

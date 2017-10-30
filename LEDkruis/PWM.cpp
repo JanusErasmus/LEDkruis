@@ -14,10 +14,15 @@
 
 PWM::PWM()
 {
-
    //Setup timer
    TCCR0A = 0x03;   //Setup timer0 in fast PWM for both the pins
-   TCCR0B = 0x03;   //Use clkIO/1024
+   TCCR0B = 0x05;   //Use clkIO/1024
+
+   //Setup pins as output
+   DDRD |= ((1 << 5) | (1 << 6));
+
+   setDuty(0, 0);
+   setDuty(1, 0);
 }
 
 void PWM::setDuty(uint8_t port, uint8_t duty)
@@ -27,23 +32,18 @@ void PWM::setDuty(uint8_t port, uint8_t duty)
       mDuty[port] = duty;
       if(duty)
       {
-         //Setup pins as output
-         DDRD |= (1 << 5);
          TCCR0A |= 0x30;
          OCR0B = duty;
       }
       else
       {
-         //Setup pins as input
-         DDRD &= ~(1 << 5);
          TCCR0A &= ~(0x30);
+         PORTD |= (1 << 5);
       }
    }
 
    if(port == 1)
    {
-      //Setup pins as output
-      DDRD |= (1 << 6);
       mDuty[port] = duty;
       if(duty)
       {
@@ -52,9 +52,8 @@ void PWM::setDuty(uint8_t port, uint8_t duty)
       }
       else
       {
-         //Setup pins as input
-         DDRD &= ~(1 << 6);
          TCCR0A &= ~(0xC0);
+         PORTD |= (1 << 6);
       }
    }
 }

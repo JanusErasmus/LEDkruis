@@ -19,6 +19,7 @@
 
 Animation *animations[] = {
       new AnimationFlipFlop(5, 2),
+      new AnimationGlow(20, 0, 0),
       new AnimationOnOff(2),
       new AnimationGlow(5, 0, 200),
       new AnimationFlipFlop(1, 2),
@@ -32,7 +33,7 @@ Animation *animations[] = {
       new AnimationFlipFlop(5, 1),
       new AnimationFlipFlop(2, 0),
       new AnimationOnOff(10),
-      new AnimationGlow(20, 0, 0),
+      new AnimationGlow(10, 0, 0),
       0
 };
 

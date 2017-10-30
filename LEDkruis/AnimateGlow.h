@@ -16,8 +16,8 @@ class AnimateGlow
    PWM *mPWM;
    uint8_t mPort;
    uint8_t mDiff;
-   uint8_t mCurrentDiff;
-   uint8_t mDuty;
+   int8_t mCurrentDiff;
+   int16_t mDuty;
 
 public:
    AnimateGlow(PWM *pwm, uint8_t port, uint8_t diff, uint8_t offset);
