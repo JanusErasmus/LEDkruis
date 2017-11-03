@@ -39,6 +39,7 @@ Animation *animations[] = {
 
 DayNight::DayNight(cAnalog *light, cInput *flashSwitch) : mLight(light), mSwitch(flashSwitch)
 {
+   mNextOverride = false;
    mFlash = false;
    mTick = 1;
    mSwitch->enablePullUp();
@@ -73,9 +74,7 @@ void DayNight::run()
        else
        {
           mFlash = true;
-          mAnimationIndex++;
-          if(animations[mAnimationIndex] == 0)
-             mAnimationIndex = 0;
+          next();
        }
     }
     else
@@ -85,6 +84,22 @@ void DayNight::run()
        pwm.setDuty(1, 0);
     }
 }
+
+void DayNight::next(uint8_t override)
+{
+   if(override)
+   {
+      mNextOverride = override;
+      mAnimationIndex++;
+   }
+
+   if(!mNextOverride)
+      mAnimationIndex++;
+
+   if(animations[mAnimationIndex] == 0)
+      mAnimationIndex = 0;
+}
+
 void DayNight::setThreshold(uint16_t threshold)
 {
    mThreshold = threshold;

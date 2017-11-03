@@ -53,6 +53,13 @@ void debugDN(uint8_t argc, char **argv)
 }
 extern const dbg_entry thEntry = {debugDN, "th"};
 
+void debugNext(uint8_t argc, char **argv)
+{
+   printp("Next\n");
+   dayNight.next(true);
+}
+extern const dbg_entry nextEntry = {debugNext, "n"};
+
 cOutput statusGreen(0x15);
 
 /* main program starts here */
@@ -72,7 +79,6 @@ int main(void)
             0
     };
     cAnalogSampler analogSampler(analogList);
-
 
     printp("Light threshold: %d\n", dayNight.getThreshold());
 

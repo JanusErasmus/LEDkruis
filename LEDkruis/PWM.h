@@ -15,8 +15,6 @@
  */
 class PWM
 {
-   uint8_t mDuty[PWM_PORT_COUNT];
-
 public:
    PWM();
    virtual ~PWM();

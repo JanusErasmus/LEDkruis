@@ -14,6 +14,7 @@
 
 class DayNight
 {
+   uint8_t mNextOverride;
    uint8_t mFlash;
    uint16_t mTick;
    cAnalog *mLight;
@@ -26,6 +27,7 @@ public:
    virtual ~DayNight();
 
    void run();
+   void next(uint8_t override = false);
 
    void setThreshold(uint16_t threshold);
    uint16_t getThreshold();
